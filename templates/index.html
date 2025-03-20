@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}퍼센트 계산기{% endblock %}
+
+{% block extra_css %}
+<style>
+    .calculator-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="calculator-container">
+    <h1 class="text-center mb-4">퍼센트 계산기</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <form id="calculatorForm" class="needs-validation" novalidate>
+                <div class="form-group mb-3">
+                    <label for="option">계산 유형</label>
+                    <select class="form-select" id="option" name="option" required>
+                        <option value="percentage_of_total">전체값의 몇 %</option>
+                        <option value="percentage_of_part">부분값의 비율</option>
+                        <option value="percentage_change">증감률 계산</option>
+                    </select>
+                </div>
+
+                <div id="inputFields" class="row">
+                    <!-- 입력 필드는 JavaScript로 동적 생성됨 -->
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">계산하기</button>
+                </div>
+            </form>
+
+            <div id="result" class="mt-3 d-none">
+                <hr>
+                <h5>계산 결과:</h5>
+                <p id="calculationResult" class="lead"></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const optionInputs = {
+        percentage_of_total: [
+            { id: 'total_value', label: '전체값', type: 'number', step: 'any' },
+            { id: 'percentage', label: '퍼센트', type: 'number', step: 'any' }
+        ],
+        percentage_of_part: [
+            { id: 'total_value', label: '전체값', type: 'number', step: 'any' },
+            { id: 'part_value', label: '부분값', type: 'number', step: 'any' }
+        ],
+        percentage_change: [
+            { id: 'old_value', label: '이전 값', type: 'number', step: 'any' },
+            { id: 'new_value', label: '새로운 값', type: 'number', step: 'any' }
+        ]
+    };
+
+    function updateInputFields() {
+        const option = document.getElementById('option').value;
+        const inputFields = document.getElementById('inputFields');
+        inputFields.innerHTML = '';
+
+        optionInputs[option].forEach(input => {
+            const col = document.createElement('div');
+            col.className = 'col-12 col-md-6 mb-3';
+            col.innerHTML = `
+                <label for="${input.id}" class="form-label">${input.label}</label>
+                <input type="${input.type}" class="form-control" id="${input.id}" name="${input.id}" 
+                       step="${input.step}" required>
+            `;
+            inputFields.appendChild(col);
+        });
+    }
+
+    document.getElementById('option').addEventListener('change', updateInputFields);
+    updateInputFields();
+
+    document.getElementById('calculatorForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const response = await fetch('/', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        document.getElementById('result').classList.remove('d-none');
+        document.getElementById('calculationResult').textContent = data.calculation;
+    });
+</script>
+{% endblock %}

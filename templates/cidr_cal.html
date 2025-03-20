@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}CIDR 계산기{% endblock %}
+
+{% block extra_css %}
+<style>
+    .calculator-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .result-box {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="calculator-container">
+    <h1 class="text-center mb-4">CIDR 계산기</h1>
+    
+    <!-- CIDR to IP Range -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">CIDR to IP Range</h5>
+        </div>
+        <div class="card-body">
+            <form id="cidrToRangeForm">
+                <div class="mb-3">
+                    <label for="cidr_input" class="form-label">CIDR</label>
+                    <input type="text" class="form-control" id="cidr_input" name="cidr_input" 
+                           placeholder="예: 10.0.0.0/24" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Calculate</button>
+            </form>
+            
+            <div id="cidrResult" class="result-box d-none">
+                <h6>Result:</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>CIDR Range:</strong> <span id="cidrRange"></span></p>
+                        <p><strong>Netmask:</strong> <span id="netmask"></span></p>
+                        <p><strong>First IP:</strong> <span id="firstIp"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Last IP:</strong> <span id="lastIp"></span></p>
+                        <p><strong>Total Hosts:</strong> <span id="totalHosts"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IP Range to CIDR -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">IP Range to CIDR</h5>
+        </div>
+        <div class="card-body">
+            <form id="rangeToCidrForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="start_ip" class="form-label">시작 IP</label>
+                        <input type="text" class="form-control" id="start_ip" name="start_ip" 
+                               placeholder="예: 10.0.0.0" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="end_ip" class="form-label">끝 IP</label>
+                        <input type="text" class="form-control" id="end_ip" name="end_ip" 
+                               placeholder="예: 10.0.0.255" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Calculate</button>
+            </form>
+
+            <div id="rangeResult" class="result-box d-none">
+                <h6>Result:</h6>
+                <div id="cidrList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('cidrToRangeForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        try {
+            const response = await fetch('/cidr', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                document.getElementById('cidrResult').classList.remove('d-none');
+                document.getElementById('cidrRange').textContent = data.cidr_range;
+                document.getElementById('netmask').textContent = data.netmask;
+                document.getElementById('firstIp').textContent = data.first_ip;
+                document.getElementById('lastIp').textContent = data.last_ip;
+                document.getElementById('totalHosts').textContent = data.total_hosts;
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            alert('계산 중 오류가 발생했습니다.');
+        }
+    });
+
+    document.getElementById('rangeToCidrForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        try {
+            const response = await fetch('/cidr', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                document.getElementById('rangeResult').classList.remove('d-none');
+                document.getElementById('cidrList').innerHTML = data.cidrs.map(cidr => 
+                    `<p>${cidr}</p>`
+                ).join('');
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            alert('계산 중 오류가 발생했습니다.');
+        }
+    });
+</script>
+{% endblock %} 
