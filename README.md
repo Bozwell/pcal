@@ -18,7 +18,7 @@
 
 
 ### hardware
-* Raspberry Pi Zero 2W
+* Raspberry Pi Zero 2W     
 hardware spec : 1GHz quad-core 64-bit ARM Cortex-A53 CPU and 512MB RAM.
 
 ### Dockerfile
