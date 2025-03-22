@@ -1,13 +1,25 @@
 # 퍼센트 계산기
 
 ### introduction
-평소 자주 사용하는 퍼센트, CIDR 계산기를 구현해 보았습니다.
+퍼센트, CIDR 계산기를 구현해 보았습니다. 이것들은 필요할때 인터넷 검색으로 온라인으로 해당 기능을 제공해 주는 사이트를 찾아서 사용하곤 했었는데, homelab 을 구축하면서 나만의 도구 모음을 만들어보고 싶다는 생각으로 만들게 되었습니다. 
+
+##### 퍼센트 계산기에서 제공하는 기능
+- 전체값의 몇 % : 예) 전체값 60000의 20%는 12000
+- 부분값의 비율 : 예) 전체값 60000의  부분값 10000은 16.67%
+- 증감률 계산  : 예) 이전값 75000, 새로운값 82000 은 9.33% 증가
+
+##### CIDR 계산기 기능
+- CIDR to IP Range
+- IP Range to CIDR
+
+##### 스크린샷
 ![screenshot](static/img/screenshot.png)
+![screenshot2](static/img/cidr_cal_screenshot.png)
 
 
 ### hardware
 * Raspberry Pi Zero 2W
-
+hardware spec : 1GHz quad-core 64-bit ARM Cortex-A53 CPU and 512MB RAM.
 
 ### Dockerfile
 
